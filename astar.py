@@ -53,11 +53,15 @@ def get_next_moves(current):
 
 def a_star(start, goal, heuristic):
     if heuristic == "Manhattan Distance":
-        start.update(0, h_manhattan(start.grid, goal))
+        start.update(0, h_manhattan(start.grid, goal), False)
     elif heuristic == "Misplaced Tiles":
-        start.update(0, h_misplaced(start.grid, goal))
+        start.update(0, h_misplaced(start.grid, goal), False)
     elif heuristic == "Linear Conflict":
-        start.update(0, h_linear(start.grid, goal))
+        start.update(0, h_linear(start.grid, goal), False)
+    elif heuristic == "Dijkstra":   
+        start.update(0, 0, False)   
+    else:
+        start.update(0, h_manhattan(start.grid, goal), True) 
     #If both grids are the same, return the distance between them
     if start.grid == goal:
             return (0)
@@ -78,13 +82,18 @@ def a_star(start, goal, heuristic):
         for child in children:
             #Evaluate cost of getting from start to testing's child node
             g = current.g + 1
-            if heuristic == "Manhattan Distance":
-                h = h_manhattan(child.grid, goal)
-            elif heuristic == "Misplaced Tiles":
+            if heuristic == "Misplaced Tiles":
                 h = h_misplaced(child.grid, goal)
             elif heuristic == "Linear Conflict":
-                h = h_linear(child.grid, goal)            
-            child.update(g, h)
+                h = h_linear(child.grid, goal)  
+            elif heuristic == "Dijkstra":   
+                h = 0      
+            else:
+                h = h_manhattan(child.grid, goal)
+            if heuristic == "Greedy BFS":
+                child.update(g, h, True)
+            else:
+                child.update(g, h, False)
             #If child node is already on openlist or closedlist with a lower cost, we pass
             if lower_seen(openlist, child) or lower_seen(closedlist, child):
                 pass

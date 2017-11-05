@@ -2,7 +2,7 @@
 
 import sys
 from models import Node
-from parse import parse_arg
+from parse import parse_arg, isSolvable
 from astar import a_star
 
 def get_goal(dimension):
@@ -54,14 +54,17 @@ def readfile(fd):
         if flag % 2 == 0:
             print("Wrong numbers in file")
             sys.exit()        
-    return table, get_goal(dimension)
+    return table, get_goal(dimension), dimension
 
 def main(argv):
     fd = parse_arg(argv)
-    start, goal = readfile(fd)
+    start, goal, dimension = readfile(fd)
+    if not isSolvable(start, goal, dimension):
+        print("This puzzle cannot be solved. Try generating another one.")
+        sys.exit()
     start = Node(start)
-    items = {'1': 'Manhattan Distance', '2': 'Misplaced Tiles', '3': 'Linear Conflict'}
-    choice = input("Welcome to our n-puzzle program. Please choose between the 3 following heuristics to solve the problem :\n 1: 'Manhattan Distance'\n 2: 'Misplaced Tiles'\n 3: 'Linear Conflict'\n Select your heuristic (1, 2 or 3): ")
+    items = {'1': 'Manhattan Distance', '2': 'Misplaced Tiles', '3': 'Linear Conflict', '4': 'Greedy BFS', '5': 'Dijkstra'}
+    choice = input("Welcome to our n-puzzle program. Please choose between the 3 following heuristics to solve the problem :\n 1: 'Manhattan Distance'\n 2: 'Misplaced Tiles'\n 3: 'Linear Conflict'\n 4: 'Greedy BFS [bonus]'\n 5: 'Dijkstra [bonus]'\n Select your heuristic (1, 2, 3, 4 or 5): ")
     if choice in items:
         heuristic = items[choice]
     else:
